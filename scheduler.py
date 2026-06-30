@@ -100,7 +100,7 @@ async def send_admin_checklist(bot):
     except Exception as e:
         print(f"Помилка адмін-чек-листа: {e}")
 
-
+async def start_scheduler(bot):
     for hour in ["9", "12", "18", "20"]:
         scheduler.add_job(
             send_reminders, "cron", hour=int(hour), minute=0, args=[bot, hour]
