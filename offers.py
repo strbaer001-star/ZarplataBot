@@ -134,40 +134,6 @@ OFFERS = {
         "note": "Українська біржа — верифікація через Дію",
         "link": "https://kuna.io/?ref=YOUR_REF",
         "rating": "7/10 ⭐"
-    },
-    "moneyveo": {
-        "name": "Moneyveo",
-        "emoji": "💵",
-        "bonus": 300,
-        "bonus_text": "300 грн",
-        "time": "15 хв",
-        "level": 2,
-        "category": "credit",
-        "conditions": [
-            "Перейди за посиланням",
-            "Заповни заявку на кредит",
-            "Отримай схвалення"
-        ],
-        "note": "Бонус за схвалену заявку. Кредит брати необов'язково",
-        "link": "https://moneyveo.ua/?ref=YOUR_REF",
-        "rating": "7/10 ⭐"
-    },
-    "mycredit": {
-        "name": "MyCredit",
-        "emoji": "💳",
-        "bonus": 250,
-        "bonus_text": "250 грн",
-        "time": "10 хв",
-        "level": 1,
-        "category": "credit",
-        "conditions": [
-            "Перейди за посиланням",
-            "Заповни анкету",
-            "Отримай рішення по заявці"
-        ],
-        "note": "Бонус за заповнену заявку незалежно від рішення",
-        "link": "https://mycredit.ua/?ref=YOUR_REF",
-        "rating": "7/10 ⭐"
     }
 }
 
