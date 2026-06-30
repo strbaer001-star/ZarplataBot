@@ -1,10 +1,12 @@
 import json
+import os
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from database import get_all_users_with_reminder, get_all_users
 from offers import OFFERS
 
 scheduler = AsyncIOScheduler()
+ADMIN_TELEGRAM_ID = os.getenv("ADMIN_TELEGRAM_ID", "")
 
 async def send_reminders(bot, hour: str):
     users = await get_all_users_with_reminder(f"{hour}:00")
@@ -59,7 +61,46 @@ async def send_weekly_digest(bot):
         except Exception as e:
             print(f"Помилка розсилки для {user_id}: {e}")
 
-async def start_scheduler(bot):
+async def send_admin_checklist(bot):
+    """Щопонеділка надсилає адміну чек-лист всіх офферів для перевірки актуальності"""
+    if not ADMIN_TELEGRAM_ID:
+        return
+
+    by_category = {}
+    for key, offer in OFFERS.items():
+        cat = offer.get("category", "banks")
+        by_category.setdefault(cat, []).append((key, offer))
+
+    cat_titles = {"banks": "🏦 Банки", "crypto": "₿ Крипто-біржі"}
+
+    text = (
+        "📋 *Щотижнева перевірка офферів*\n"
+        "━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "Перевір чи умови ще актуальні (5-10 хв):\n\n"
+    )
+
+    for cat, offers_list in by_category.items():
+        text += f"{cat_titles.get(cat, cat)}\n"
+        for key, offer in offers_list:
+            text += f"☐ {offer['emoji']} {offer['name']} — {offer['bonus_text']}\n"
+            text += f"   {offer['link']}\n"
+        text += "\n"
+
+    text += (
+        "━━━━━━━━━━━━━━━━━━━━━\n\n"
+        "Перевір для кожного:\n"
+        "• Сума бонусу не змінилась?\n"
+        "• Умови виконання ті ж самі?\n"
+        "• Посилання ще робоче?\n\n"
+        "Якщо щось змінилось — онови `offers.py` на GitHub."
+    )
+
+    try:
+        await bot.send_message(int(ADMIN_TELEGRAM_ID), text, parse_mode="Markdown")
+    except Exception as e:
+        print(f"Помилка адмін-чек-листа: {e}")
+
+
     for hour in ["9", "12", "18", "20"]:
         scheduler.add_job(
             send_reminders, "cron", hour=int(hour), minute=0, args=[bot, hour]
@@ -67,6 +108,10 @@ async def start_scheduler(bot):
 
     scheduler.add_job(
         send_weekly_digest, "cron", day_of_week="mon", hour=10, minute=0, args=[bot]
+    )
+
+    scheduler.add_job(
+        send_admin_checklist, "cron", day_of_week="mon", hour=8, minute=0, args=[bot]
     )
 
     scheduler.start()
