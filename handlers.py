@@ -1,6 +1,6 @@
 import json
 from aiogram import Router, F, Bot
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.filters import CommandStart
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State, StatesGroup
@@ -441,7 +441,7 @@ async def help_router(callback: CallbackQuery):
         kb.button(text="◀️ Назад", callback_data="back_start")
         kb = with_support_button(kb)
         kb.adjust(1)
-        await callback.message.edit_text(
+        caption = (
             f"📲 *Як встановити {offer.get('name', '')}*\n"
             f"{divider()}\n\n"
             f"*iPhone:*\n"
@@ -452,10 +452,16 @@ async def help_router(callback: CallbackQuery):
             f"1️⃣ Відкрий Google Play\n"
             f"2️⃣ Введи назву в пошуку\n"
             f"3️⃣ Натисни «Встановити»\n\n"
-            f"💡 _Не знайшов? Спробуй повну назву_",
-            parse_mode="Markdown",
-            reply_markup=kb.as_markup()
+            f"💡 _Не знайшов? Спробуй повну назву_"
         )
+        try:
+            photo = FSInputFile("images/step1_install.png")
+            await callback.message.delete()
+            await callback.message.answer_photo(
+                photo, caption=caption, parse_mode="Markdown", reply_markup=kb.as_markup()
+            )
+        except Exception:
+            await callback.message.edit_text(caption, parse_mode="Markdown", reply_markup=kb.as_markup())
         return
 
     if data.startswith("help_verify_"):
@@ -466,7 +472,7 @@ async def help_router(callback: CallbackQuery):
         kb.button(text="◀️ Назад", callback_data="back_start")
         kb = with_support_button(kb)
         kb.adjust(1)
-        await callback.message.edit_text(
+        caption = (
             f"🪪 *Верифікація — покроково*\n"
             f"{divider()}\n\n"
             f"*Через Дію (найшвидше):*\n"
@@ -478,10 +484,16 @@ async def help_router(callback: CallbackQuery):
             f"1️⃣ Фото паспорта\n"
             f"2️⃣ Селфі з паспортом\n"
             f"3️⃣ Завантаж в додаток\n"
-            f"⏱ 5-10 хвилин",
-            parse_mode="Markdown",
-            reply_markup=kb.as_markup()
+            f"⏱ 5-10 хвилин"
         )
+        try:
+            photo = FSInputFile("images/step2_verify.png")
+            await callback.message.delete()
+            await callback.message.answer_photo(
+                photo, caption=caption, parse_mode="Markdown", reply_markup=kb.as_markup()
+            )
+        except Exception:
+            await callback.message.edit_text(caption, parse_mode="Markdown", reply_markup=kb.as_markup())
         return
 
     if data.startswith("help_card_"):
@@ -492,7 +504,7 @@ async def help_router(callback: CallbackQuery):
         kb.button(text="◀️ Назад", callback_data="back_start")
         kb = with_support_button(kb)
         kb.adjust(1)
-        await callback.message.edit_text(
+        caption = (
             f"💳 *Як оформити картку*\n"
             f"{divider()}\n\n"
             f"1️⃣ Розділ «Картки» в додатку\n"
@@ -500,10 +512,16 @@ async def help_router(callback: CallbackQuery):
             f"3️⃣ Обери з кредитним лімітом — більший бонус\n"
             f"4️⃣ Підтверди замовлення\n\n"
             f"⚠️ _Кредитний ліміт — безкоштовно_\n"
-            f"💡 _Відмовили? Картка без ліміту теж дає бонус_",
-            parse_mode="Markdown",
-            reply_markup=kb.as_markup()
+            f"💡 _Відмовили? Картка без ліміту теж дає бонус_"
         )
+        try:
+            photo = FSInputFile("images/step3_card.png")
+            await callback.message.delete()
+            await callback.message.answer_photo(
+                photo, caption=caption, parse_mode="Markdown", reply_markup=kb.as_markup()
+            )
+        except Exception:
+            await callback.message.edit_text(caption, parse_mode="Markdown", reply_markup=kb.as_markup())
         return
 
     bank_key = data.replace("help_", "")
