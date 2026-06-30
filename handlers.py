@@ -201,6 +201,7 @@ async def select_existing(callback: CallbackQuery, state: FSMContext):
     for key, offer in offers_for_cat.items():
         kb.button(text=f"⬜ {offer['emoji']} {offer['name']}", callback_data=f"toggle_{key}")
     kb.button(text="✅ Далі — показати мій квест", callback_data="banks_done")
+    kb.button(text="◀️ Назад", callback_data="choose_category")
     kb = with_support_button(kb)
     kb.adjust(1)
 
@@ -234,6 +235,7 @@ async def toggle_bank(callback: CallbackQuery, state: FSMContext):
         check = "☑️" if key in selected else "⬜"
         kb.button(text=f"{check} {offer['emoji']} {offer['name']}", callback_data=f"toggle_{key}")
     kb.button(text="✅ Далі — показати мій квест", callback_data="banks_done")
+    kb.button(text="◀️ Назад", callback_data="choose_category")
     kb = with_support_button(kb)
     kb.adjust(1)
 
@@ -305,6 +307,7 @@ async def show_quest(callback: CallbackQuery, state: FSMContext):
     kb = InlineKeyboardBuilder()
     kb.button(text=f"▶️ Крок 1: {available[0][1]['name']}", callback_data=f"step_{available[0][0]}")
     kb.button(text="🕐 Нагадати пізніше", callback_data="pause_quest")
+    kb.button(text="◀️ Назад", callback_data="choose_category")
     kb = with_support_button(kb)
     kb.adjust(1)
 
@@ -332,6 +335,7 @@ async def show_step(callback: CallbackQuery):
     kb.button(text="✅ Виконав — зараховуй!", callback_data=f"done_{bank_key}")
     kb.button(text="❓ Не виходить — допоможи", callback_data=f"help_{bank_key}")
     kb.button(text="⏸ Зупинитись на сьогодні", callback_data="pause_quest")
+    kb.button(text="◀️ Назад", callback_data="back_start")
     kb = with_support_button(kb)
     kb.adjust(1)
 
@@ -381,6 +385,7 @@ async def step_done(callback: CallbackQuery):
         kb = InlineKeyboardBuilder()
         kb.button(text="🔄 Новий квест", callback_data="choose_category")
         kb.button(text="📊 Мій прогрес", callback_data="my_progress")
+        kb.button(text="◀️ Назад", callback_data="back_start")
         kb = with_support_button(kb)
         kb.adjust(1)
 
@@ -405,6 +410,7 @@ async def step_done(callback: CallbackQuery):
     kb = InlineKeyboardBuilder()
     kb.button(text=f"▶️ Крок {len(completed)+1}: {next_offer['name']}", callback_data=f"step_{next_key}")
     kb.button(text="⏸ Продовжити завтра", callback_data="pause_quest")
+    kb.button(text="◀️ Назад", callback_data="back_start")
     kb = with_support_button(kb)
     kb.adjust(1)
 
@@ -436,6 +442,7 @@ async def help_router(callback: CallbackQuery):
         kb = InlineKeyboardBuilder()
         kb.button(text="✅ Встановив!", callback_data=f"step_{bank_key}")
         kb.button(text="😕 Все одно не виходить", callback_data=f"help_{bank_key}")
+        kb.button(text="◀️ Назад", callback_data="back_start")
         kb = with_support_button(kb)
         kb.adjust(1)
         await callback.message.edit_text(
@@ -460,6 +467,7 @@ async def help_router(callback: CallbackQuery):
         kb = InlineKeyboardBuilder()
         kb.button(text="✅ Верифікувався!", callback_data=f"step_{bank_key}")
         kb.button(text="😕 Ще є питання", callback_data=f"help_{bank_key}")
+        kb.button(text="◀️ Назад", callback_data="back_start")
         kb = with_support_button(kb)
         kb.adjust(1)
         await callback.message.edit_text(
@@ -485,6 +493,7 @@ async def help_router(callback: CallbackQuery):
         kb = InlineKeyboardBuilder()
         kb.button(text="✅ Оформив!", callback_data=f"step_{bank_key}")
         kb.button(text="😕 Ще є питання", callback_data=f"help_{bank_key}")
+        kb.button(text="◀️ Назад", callback_data="back_start")
         kb = with_support_button(kb)
         kb.adjust(1)
         await callback.message.edit_text(
