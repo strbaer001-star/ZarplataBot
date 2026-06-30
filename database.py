@@ -12,6 +12,7 @@ async def init_db():
                 quest_progress TEXT DEFAULT '',
                 reminder_time TEXT DEFAULT NULL,
                 total_earned INTEGER DEFAULT 0,
+                support_fail_count INTEGER DEFAULT 0,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         """)

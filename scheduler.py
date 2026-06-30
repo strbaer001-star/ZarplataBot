@@ -1,12 +1,12 @@
 import json
 from apscheduler.schedulers.asyncio import AsyncIOScheduler
-from database import get_all_users_with_reminder, get_all_users, get_user
+from aiogram.utils.keyboard import InlineKeyboardBuilder
+from database import get_all_users_with_reminder, get_all_users
 from offers import OFFERS
 
 scheduler = AsyncIOScheduler()
 
 async def send_reminders(bot, hour: str):
-    """Надсилає нагадування всім хто поставив цей час"""
     users = await get_all_users_with_reminder(f"{hour}:00")
     for user_id, quest_progress in users:
         try:
@@ -22,7 +22,6 @@ async def send_reminders(bot, hour: str):
             offer = OFFERS.get(next_bank, {})
             remaining_total = sum(OFFERS[k]["bonus"] for k in remaining if k in OFFERS)
 
-            from aiogram.utils.keyboard import InlineKeyboardBuilder
             kb = InlineKeyboardBuilder()
             kb.button(text="▶️ Продовжити!", callback_data=f"step_{next_bank}")
             kb.adjust(1)
@@ -40,13 +39,11 @@ async def send_reminders(bot, hour: str):
             print(f"Помилка нагадування для {user_id}: {e}")
 
 async def send_weekly_digest(bot):
-    """Щопонеділка надсилає нові офери всім підписникам"""
     users = await get_all_users()
     for (user_id,) in users:
         try:
-            from aiogram.utils.keyboard import InlineKeyboardBuilder
             kb = InlineKeyboardBuilder()
-            kb.button(text="▶️ Почати квест", callback_data="start_quest")
+            kb.button(text="▶️ Почати квест", callback_data="choose_category")
             kb.adjust(1)
 
             await bot.send_message(
@@ -54,10 +51,8 @@ async def send_weekly_digest(bot):
                 "🔥 Нові офери тижня!\n\n"
                 "🥇 O.Bank — 400 грн\n"
                 "🥈 ПУМБ — 300 грн\n"
-                "🥉 ПриватБанк — 150 грн\n"
-                "4️⃣ Monobank — 100 грн\n"
-                "5️⃣ Sense Bank — 100 грн\n\n"
-                "💰 Разом: до 1150 грн за ~50 хвилин\n\n"
+                "🥉 ПриватБанк — 150 грн\n\n"
+                "💰 Разом: до 950 грн за ~30 хвилин\n\n"
                 "Починаємо? 👇",
                 reply_markup=kb.as_markup()
             )
@@ -65,26 +60,13 @@ async def send_weekly_digest(bot):
             print(f"Помилка розсилки для {user_id}: {e}")
 
 async def start_scheduler(bot):
-    """Запускає всі заплановані задачі"""
-
-    # Нагадування щогодини в потрібний час
     for hour in ["9", "12", "18", "20"]:
         scheduler.add_job(
-            send_reminders,
-            "cron",
-            hour=int(hour),
-            minute=0,
-            args=[bot, hour]
+            send_reminders, "cron", hour=int(hour), minute=0, args=[bot, hour]
         )
 
-    # Щотижнева розсилка — щопонеділка о 10:00
     scheduler.add_job(
-        send_weekly_digest,
-        "cron",
-        day_of_week="mon",
-        hour=10,
-        minute=0,
-        args=[bot]
+        send_weekly_digest, "cron", day_of_week="mon", hour=10, minute=0, args=[bot]
     )
 
     scheduler.start()
