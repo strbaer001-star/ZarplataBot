@@ -121,7 +121,6 @@ async def choose_category(callback: CallbackQuery, state: FSMContext):
     kb = InlineKeyboardBuilder()
     kb.button(text="🏦 Банки та картки", callback_data="cat_banks")
     kb.button(text="₿ Крипто-біржі", callback_data="cat_crypto")
-    kb.button(text="💳 Кредити та МФО", callback_data="cat_credit")
     kb.button(text="🔥 Все та одразу — MAX заробіток", callback_data="cat_all")
     kb.button(text="◀️ Назад", callback_data="back_start")
     kb = with_support_button(kb)
@@ -134,8 +133,6 @@ async def choose_category(callback: CallbackQuery, state: FSMContext):
         f"┗ Відкрий картку → отримай бонус\n\n"
         f"₿ *Крипто-біржі*\n"
         f"┗ Зареєструйся → верифікуйся → заробляй\n\n"
-        f"💳 *Кредити та МФО*\n"
-        f"┗ Подай заявку → отримай виплату\n\n"
         f"🔥 *Все та одразу*\n"
         f"┗ Максимальний заробіток за один квест\n\n"
         f"{divider()}",
@@ -152,7 +149,6 @@ async def choose_level(callback: CallbackQuery, state: FSMContext):
     cat_names = {
         "banks": "🏦 Банки та картки",
         "crypto": "₿ Крипто-біржі",
-        "credit": "💳 Кредити та МФО",
         "all": "🔥 Все та одразу"
     }
 
@@ -284,7 +280,7 @@ async def show_quest(callback: CallbackQuery, state: FSMContext):
     await state.set_state(QuestState.in_quest)
 
     level_badges = {"easy": "🟢 ЛЕГКО", "medium": "🟡 СЕРЕДНЬО", "hard": "🔴 ХАРД"}
-    cat_names = {"banks": "🏦 Банки", "crypto": "₿ Крипто", "credit": "💳 Кредити", "all": "🔥 Все"}
+    cat_names = {"banks": "🏦 Банки", "crypto": "₿ Крипто", "all": "🔥 Все"}
 
     text = (
         f"🎯 *Твій квест готовий!*\n"
